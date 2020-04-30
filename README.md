@@ -1,4 +1,4 @@
-## SyncTube-octoSubs
+## SyncTube-octosubs
 
 [SyncTube](https://github.com/RblSb/SyncTube) subtitles plugin based on [Octopus](https://github.com/Dador/JavascriptSubtitlesOctopus) (experimental)
 
@@ -8,12 +8,10 @@
 ```js
 'use strict';
 const JsApi = client.JsApi;
-JsApi.addPlugin('octoSubs');
+JsApi.addPlugin('octosubs');
 ```
 - Create `user/res/plugins/` folder
 - Open `plugins` folder in terminal: `cd user/res/plugins`
-- `git clone https://github.com/RblSb/SyncTube-octoSubs.git octoSubs`
+- `git clone https://github.com/RblSb/SyncTube-octosubs.git octosubs`
 
-Now every time you add `site.com/file.mp4` to playlist this plugin will check `site.com/file.ass` file and load if it exists. To load `ass` file [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) should be enabled on that server.
-
-Url input / more features soon.
+Now every time you add `site.com/file.mp4` to playlist this plugin will check `site.com/file.ass` file and load if it exists.
