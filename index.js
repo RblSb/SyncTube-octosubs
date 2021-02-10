@@ -10,6 +10,7 @@ synctube.octosubs = class {
   }
 
   init() {
+    this.apiPolyfill();
     let instance;
     this.api.notifyOnVideoRemove(item => {
       if (instance) {
@@ -25,7 +26,16 @@ synctube.octosubs = class {
       if (item.duration < 60 * 5) return;
       if (item.url.indexOf('.mp4') == -1) return;
       let subsUrl = item.url.replace('.mp4', '.ass');
-      subsUrl = `/proxy?url=${encodeURI(subsUrl)}`;
+      const localIp = this.api.getLocalIp();
+      const globalIp = this.api.getGlobalIp();
+      // do not need proxy for same server urls
+      if (item.url.indexOf(globalIp) != -1) {
+        // looks like we are server and connected from localhost
+        // use local ip instead of our external ip then
+        if (localIp != globalIp) subsUrl = subsUrl.replace(globalIp, localIp);
+      } else {
+        subsUrl = `/proxy?url=${encodeURI(subsUrl)}`;
+      }
       // subsUrl = `${this.path}/test.ass`;
       this.fetchStatus(subsUrl, status => {
         if (status != 200) return;
@@ -45,8 +55,15 @@ synctube.octosubs = class {
     client.onload = function() {
       callback(this.status);
     }
-    client.open("HEAD", address, true);
+    client.open('HEAD', address, true);
     client.send();
+  }
+
+  apiPolyfill() {
+    let host = location.hostname;
+    if (host === '') host = 'localhost';
+    if (!this.api.getLocalIp) this.api.getLocalIp = () => host;
+    if (!this.api.getGlobalIp) this.api.getGlobalIp = () => host;
   }
 
 }
