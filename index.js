@@ -11,6 +11,7 @@ synctube.octosubs = class {
 
   init() {
     this.apiPolyfill();
+    this.api.addSubtitleSupport('ass');
     let instance;
     this.api.notifyOnVideoRemove(item => {
       if (instance) {
@@ -20,12 +21,16 @@ synctube.octosubs = class {
     });
     this.api.notifyOnVideoChange(item => {
       if (instance) {
+        this.removeToggleButton();
         instance.dispose();
         instance = null;
       }
-      if (item.duration < 60 * 5) return;
-      if (item.url.indexOf('.mp4') == -1) return;
-      let subsUrl = item.url.replace('.mp4', '.ass');
+      let subsUrl = item.subs;
+      if (subsUrl == null || subsUrl == '') {
+        if (item.duration < 60 * 5) return;
+        if (item.url.indexOf('.mp4') == -1) return;
+        subsUrl = item.url.replace('.mp4', '.ass');
+      }
       const localIp = this.api.getLocalIp();
       const globalIp = this.api.getGlobalIp();
       // do not need proxy for same server urls
@@ -46,24 +51,62 @@ synctube.octosubs = class {
           legacyWorkerUrl: `${this.path}/subtitles-octopus-worker-legacy.js`
         };
         instance = new SubtitlesOctopus(options);
+        this.addToggleButton();
       });
     });
   }
 
   fetchStatus(address, callback) {
     const client = new XMLHttpRequest();
-    client.onload = function() {
+    client.onload = function () {
       callback(this.status);
     }
     client.open('HEAD', address, true);
     client.send();
   }
 
+  addToggleButton() {
+    const togglesubs = document.querySelector('#togglesubs');
+    if (togglesubs) return;
+    const button = this.nodeFromString(`
+      <button id="togglesubs" title="Toggle subtitles">
+       <ion-icon name="text"></ion-icon>
+      </button>
+    `);
+    button.onclick = () => {
+      const subsEl = document.querySelector('.libassjs-canvas-parent');
+      if (!subsEl) return;
+      if (subsEl.style.display == '') {
+        subsEl.style.display = 'none';
+        button.style.opacity = 0.5;
+      } else {
+        subsEl.style.display = '';
+        button.style.opacity = 1;
+      }
+    }
+    const togglesynch = document.querySelector('#togglesynch');
+    togglesynch.parentElement.insertBefore(button, togglesynch);
+  }
+
+  removeToggleButton() {
+    const togglesubs = document.querySelector('#togglesubs');
+    if (!togglesubs) return;
+    togglesubs.remove();
+  }
+
   apiPolyfill() {
+    let api = this.api;
     let host = location.hostname;
     if (host === '') host = 'localhost';
-    if (!this.api.getLocalIp) this.api.getLocalIp = () => host;
-    if (!this.api.getGlobalIp) this.api.getGlobalIp = () => host;
+    if (!api.addSubtitleSupport) api.addSubtitleSupport = () => { };
+    if (!api.getLocalIp) api.getLocalIp = () => host;
+    if (!api.getGlobalIp) api.getGlobalIp = () => host;
+  }
+
+  nodeFromString(div) {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = div;
+    return wrapper.firstElementChild;
   }
 
 }
