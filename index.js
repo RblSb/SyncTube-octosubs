@@ -31,6 +31,7 @@ synctube.octosubs = class {
         if (item.url.indexOf('.mp4') == -1) return;
         subsUrl = item.url.replace('.mp4', '.ass');
       }
+      if (subsUrl.indexOf('.ass') == -1) return;
       const localIp = this.api.getLocalIp();
       const globalIp = this.api.getGlobalIp();
       // do not need proxy for same server urls

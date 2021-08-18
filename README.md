@@ -1,6 +1,8 @@
 ## SyncTube-octosubs
 
-[SyncTube](https://github.com/RblSb/SyncTube) subtitles plugin based on [Octopus](https://github.com/Dador/JavascriptSubtitlesOctopus) (experimental)
+[SyncTube](https://github.com/RblSb/SyncTube) ASS subtitles plugin based on [Octopus](https://github.com/Dador/JavascriptSubtitlesOctopus) (experimental)
+
+**Attention:** SyncTube now has basic ASS support out of box (in web and android clients), that converts ASS text to WebVTT subtitles. Install this if you need more colors, formatting and other ASS features.
 
 ### Installation
 - Install and open SyncTube project folder
