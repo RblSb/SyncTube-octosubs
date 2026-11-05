@@ -62,7 +62,7 @@ synctube.octosubs = class {
       // use local ip instead of our external ip then
       if (localIp != globalIp) subsUrl = subsUrl.replace(globalIp, localIp);
     } else {
-      subsUrl = `/proxy?url=${encodeURI(subsUrl)}`;
+      subsUrl = `/proxy?url=${encodeURIComponent(subsUrl)}`;
     }
 
     this.fetchStatus(subsUrl, status => {
